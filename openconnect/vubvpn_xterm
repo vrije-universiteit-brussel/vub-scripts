@@ -1,0 +1,3 @@
+# useful for adding as an application in de KDE menu
+
+xterm -hold -e '~/path/to/vub-scripts/openconnect/connect.sh $(kwallet-query -r netid kdewallet)'
