@@ -18,7 +18,7 @@ vpn_password=""
 #############################################
 if [ "$1" == "" ]
 then
-    echo 'Usage:' $0 ' [-c] [-e] [-i] [-p {password}] [-u {username}]'
+    echo 'Usage:' $0 ' [-c {file}] [-e] [-i] [-p {password}] [-u {username}]'
     echo "-c Certfile [optional]"
     echo "-e External Partner Authentication [optional]"
     echo "-i Interactive Mode [optional]"
