@@ -3,8 +3,8 @@
 # set defaults
 interactive_mode=false
 # domain
-vpn_domain=vpn.vub.be
-vpn_certfile=$(dirname $0)/"${vpn_domain}.crt"
+vpn_url=https://vpn.vub.be
+vpn_certfile=$(dirname $0)/"vpn.vub.be.crt"
 # credentials
 vpn_username=$USER
 vpn_password=""
@@ -27,19 +27,19 @@ fi
 # ARGUMENTS
 #####################################
 # c,s,e expect parameters, v does not
-while getopts eip:u: opt; do
+while getopts c:eip:u: opt; do
   case $opt in
       #####################################
       # option "external"
       #####################################
       c)
-        vpn_certfile=vpn.vub.be/partners/
+        vpn_certfile=${OPTARG}
       ;;
       #####################################
       # option "external"
       #####################################
       e)
-        vpn_domain=vpn.vub.be/partners/
+        vpn_url="https://vpn.vub.be/partners/"
       ;;
       #####################################
       # option "interactive"
@@ -78,7 +78,7 @@ done
 
 # Add your credentials
 declare -r vpn_user="$vpn_username"
-declare -r connect_hostname="$vpn_domain"
+declare -r connect_url="$vpn_url"
 declare -r certfile="$vpn_certfile"
 
 echo
@@ -105,7 +105,7 @@ then
     --juniper \
     --user="${vpn_user}" \
 	--cafile "${certfile}" \
-    "${connect_hostname}"
+    "${connect_url}"
 # non interctive mode, vpn_password is known
 else
   echo -n $vpn_password |
@@ -114,7 +114,7 @@ else
    --user="${vpn_user}" \
    --passwd-on-stdin \
    --cafile "${certfile}" \
-   "${connect_hostname}"
+   "${connect_url}"
 fi
 
 if [ ! $? -eq 0 ]
