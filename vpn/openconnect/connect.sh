@@ -1,42 +1,125 @@
 #!/bin/bash
 
-vpndomain=vpn.vub.be
+# set defaults
+interactive_mode=false
+# domain
+vpn_domain=vpn.vub.be
+vpn_certfile=$(dirname $0)/"${vpn_domain}.crt"
+# credentials
+vpn_username=$USER
+vpn_password=""
 
-#check NetID password
-if [ $# -eq 0 ]
-  then
-    declare -r vpn_password=""
-else
-	  declare -r vpn_password=$1
+#############################################
+# CHECK IF OPTIONS ARE SET
+#############################################
+if [ "$1" == "" ]
+then
+    echo 'Usage:' $0 ' [-i] [-p {password}] [-u] [-e] [-c]'
+    echo "-c Certfile [optional]"
+    echo "-i Interactive Mode [optional]"
+    echo "-e External User [optional]"
+    echo "-u VPN Username [optional]"
+    echo "-p VPN Password [optional]"
+    exit
 fi
 
+#####################################
+# ARGUMENTS
+#####################################
+# c,s,e expect parameters, v does not
+while getopts eip:u: opt; do
+  case $opt in
+      #####################################
+      # option "external"
+      #####################################
+      c)
+        vpn_certfile=vpn.vub.be/partners/
+      ;;
+      #####################################
+      # option "external"
+      #####################################
+      e)
+        vpn_domain=vpn.vub.be/partners/
+      ;;
+      #####################################
+      # option "interactive"
+      #####################################
+      i)
+        interactive_mode=true
+      ;;
+      #####################################
+      # option "password"
+      #####################################
+      p)
+        vpn_password=${OPTARG}
+      ;;
+      #####################################
+      # option "user"
+      #####################################
+      u)
+        vpn_username=${OPTARG}
+      ;;
+      #####################################
+      # illegal options
+      #####################################
+      \?)
+	       echo "Invalid option: -$OPTARG" >&2
+	       exit 1
+	    ;;
+      #####################################
+      # required options
+      #####################################
+      :)
+      	echo "Option -$OPTARG requires an argument." >&2
+      	exit 1
+	    ;;
+  esac
+done
+
 # Add your credentials
-declare -r vpn_user="$USER"
-declare -r connect_hostname="$vpndomain"
-declare -r certfile=$(dirname $0)/"${vpndomain}.crt"
+declare -r vpn_user="$vpn_username"
+declare -r connect_hostname="$vpn_domain"
+declare -r certfile="$vpn_certfile"
 
 echo
-echo 'This script must be run by root. Please enter your password.'
+echo 'This script must be run by root. Please enter your (sudo) password.'
 echo
 
-if [[ $vpn_password == "" ]]
+# command line example:
+#sudo openconnect --juniper --user="brdooms" --passwd-on-stdin ssl.vub.ac.be
+
+# check if openconnect installed
+openconnect --version
+echo
+if [ ! $? -eq 0 ]
+then
+    echo Abort. Package openconnect not installed on your system!
+    echo
+    exit 1
+fi
+
+if [[ $vpn_password == "" || $interactive_mode == "true" ]]
 # interactive mode
 then
-  sudo /usr/sbin/openconnect \
+  sudo openconnect \
     --juniper \
     --user="${vpn_user}" \
-	  --cafile "${certfile}" \
+	--cafile "${certfile}" \
     "${connect_hostname}"
 # non interctive mode, vpn_password is known
 else
   echo -n $vpn_password |
-  sudo /usr/sbin/openconnect \
+  sudo openconnect \
    --juniper \
    --user="${vpn_user}" \
    --passwd-on-stdin \
    --cafile "${certfile}" \
    "${connect_hostname}"
-
 fi
-# command line example:
-#sudo openconnect --juniper --user="brdooms" --passwd-on-stdin ssl.vub.ac.be
+
+if [ ! $? -eq 0 ]
+then
+    echo
+    echo Connection failed!
+fi
+echo
