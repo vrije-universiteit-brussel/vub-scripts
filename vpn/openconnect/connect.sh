@@ -1,25 +1,29 @@
 #!/bin/bash
 
-# set defaults
+#############################################
+# DEFAULTS
+#############################################
 interactive_mode=false
-# domain
+
+# url
 vpn_url=https://vpn.vub.be
 vpn_certfile=$(dirname $0)/"vpn.vub.be.crt"
+
 # credentials
 vpn_username=$USER
 vpn_password=""
 
 #############################################
-# CHECK IF OPTIONS ARE SET
+# USAGE
 #############################################
 if [ "$1" == "" ]
 then
-    echo 'Usage:' $0 ' [-i] [-p {password}] [-u] [-e] [-c]'
+    echo 'Usage:' $0 ' [-c] [-e] [-i] [-p {password}] [-u {username}]'
     echo "-c Certfile [optional]"
+    echo "-e External Partner Authentication [optional]"
     echo "-i Interactive Mode [optional]"
-    echo "-e External User [optional]"
-    echo "-u VPN Username [optional]"
     echo "-p VPN Password [optional]"
+    echo "-u VPN Username [optional]"
     exit
 fi
 
@@ -76,6 +80,9 @@ while getopts c:eip:u: opt; do
   esac
 done
 
+#####################################
+# SETUP VPN CONFIG
+#####################################
 # Add your credentials
 declare -r vpn_user="$vpn_username"
 declare -r connect_url="$vpn_url"
@@ -88,6 +95,9 @@ echo
 # command line example:
 #sudo openconnect --juniper --user="brdooms" --passwd-on-stdin ssl.vub.ac.be
 
+#####################################
+# OPENCONNECT
+#####################################
 # check if openconnect installed
 openconnect --version
 echo
@@ -98,6 +108,9 @@ then
     exit 1
 fi
 
+#####################################
+# CONNECT TO VUB VPN
+#####################################
 if [[ $vpn_password == "" || $interactive_mode == "true" ]]
 # interactive mode
 then
