@@ -18,8 +18,9 @@ vpn_password=""
 #############################################
 function display_usage()
 {
-    # 'Usage:' $0 ' [-c {certfile}] [-e] [-i] [-p {password}] [-u {username}]'
-    echo 'Usage:'
+    echo 'Usage:' $0 ' [-c {certfile}] [-e] [-h] [-i] [-p {password}] [-u {username}]'
+    echo
+    echo 'Options:'
     echo -e "-c {certfile} \t\t Specify certfile"
     echo -e "-e \t\t\t Use external partner authentication"
     echo -e "-h \t\t\t Show this summary"
@@ -37,7 +38,6 @@ fi
 #####################################
 # ARGUMENTS
 #####################################
-# c,s,e expect parameters, v does not
 while getopts c:ehip:u: opt; do
   case $opt in
       #####################################
