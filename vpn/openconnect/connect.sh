@@ -16,22 +16,29 @@ vpn_password=""
 #############################################
 # USAGE
 #############################################
+function display_usage()
+{
+    # 'Usage:' $0 ' [-c {certfile}] [-e] [-i] [-p {password}] [-u {username}]'
+    echo 'Usage:'
+    echo -e "-c {certfile} \t\t Specify certfile"
+    echo -e "-e \t\t\t Use external partner authentication"
+    echo -e "-h \t\t\t Show this summary"
+    echo -e "-i \t\t\t Use interactive mode"
+    echo -e "-p {password} \t\t Specify vpn password"
+    echo -e "-u {username} \t\t Specify vpn username"
+    exit
+}
+
 if [ "$1" == "" ]
 then
-    echo 'Usage:' $0 ' [-c {file}] [-e] [-i] [-p {password}] [-u {username}]'
-    echo "-c Certfile [optional]"
-    echo "-e External Partner Authentication [optional]"
-    echo "-i Interactive Mode [optional]"
-    echo "-p VPN Password [optional]"
-    echo "-u VPN Username [optional]"
-    exit
+    display_usage
 fi
 
 #####################################
 # ARGUMENTS
 #####################################
 # c,s,e expect parameters, v does not
-while getopts c:eip:u: opt; do
+while getopts c:ehip:u: opt; do
   case $opt in
       #####################################
       # option "external"
@@ -44,6 +51,13 @@ while getopts c:eip:u: opt; do
       #####################################
       e)
         vpn_url="https://vpn.vub.be/partners/"
+      ;;
+      #####################################
+      # option "help"
+      #####################################
+      h)
+        display_usage
+        exit 0
       ;;
       #####################################
       # option "interactive"
