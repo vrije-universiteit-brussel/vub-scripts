@@ -14,6 +14,20 @@ sudo apt install openconnect
 
 ## Run the script
 
+## Options
+
+```
+[-c {certfile}] [-e] [-h] [-i] [-p {password}] [-u {username}]
+
+Options:
+-c {certfile} Specify certfile
+-e Use external partner authentication
+-h Show this summary
+-i Use interactive mode
+-p {password} Specify vpn password
+-u {username} Specify vpn username
+```
+
 All options are optional. If no username is supplied, the local system username is assumed. For security reasons, you may use the interactive mode.
 
 Example:
